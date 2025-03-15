@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Canciones aclamadas de Radiohead</title>
+  <!-- Enlazamos el archivo CSS externo -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>De las canciones mas aclamadas de Radiohead.</h1>
+  <h5>By Cesar Martinez TDS</h5>
+  
+  <!-- Barra de búsqueda -->
+  <input type="text" id="search" placeholder="Buscar cancion..." oninput="filterSongs()" />
+  
+  <!-- Contenedor para las tarjetas -->
+  <div id="songs-container" class="grid"></div>
+
+  <!-- Modal -->
+  <div id="modal" class="modal" onclick="closeModal(event)">
+    <div class="modal-content">
+      <p id="modal-text"></p>
+      <button onclick="closeModal()">Cerrar</button>
+    </div>
+  </div>
+
+  <script>
+    // Lista de canciones
+    const songs = [
+      {
+        title: "Creep",
+        album: "Pablo Honey (1993)",
+        cover: "pablo_honey.jpg",
+        details: "La cancion que los lanzo a la fama, con letras sobre la inseguridad y la alienacion. Creep es bastante sencilla y habla sobre estar enamorado de alguien mientras sientes que no eres suficiente para esa persona. Pero el músico también quería que la canción no fuera 'arrogantemente masculina' para no caer en estereotipos de géneros en la época.",
+        youtube: "https://www.youtube.com/watch?v=XFkzRNyygfk"
+      },
+      {
+        title: "You",
+        album: "Pablo Honey (1993)",
+        cover: "pablo_honey.jpg",
+        details: "Tema de apertura del album debut, con guitarras potentes y un tono melancolico. reflejan una lucha interna entre la devoción y el miedo a perderse en el caos que el otro representa, resonando con temas recurrentes en Radiohead sobre identidad y alienación.",
+        youtube: "https://www.youtube.com/watch?v=7MdV7_eUhzs"
+      },
+      {
+        title: "Fake Plastic Trees",
+        album: "The Bends (1995)",
+        cover: "the_bends.jpg",
+        details: "Una balada conmovedora que critica la artificialidad de la sociedad moderna. Thom Yorke , compositor de Radiohead, dijo que 'Fake Plastic Trees' fue el producto de una broma que en realidad no era una broma, una noche de borrachera muy solitaria y, bueno, una especie de 'crisis nerviosa'. Dijo que la canción surgió de una melodía con la que 'no tenía idea de qué hacer'.",
+        youtube: "https://www.youtube.com/watch?v=n5h0qHwNrHk"
+      },
+      {
+        title: "High and Dry",
+        album: "The Bends (1995)",
+        cover: "the_bends.jpg",
+        details: "Una de las canciones mas accesibles de la banda, con un tono romantico y nostalgico. La canción habla de abandonar la propia identidad para crear una imagen diferente ante los demás. habla sobre un narcisista o alguien que necesita atención. sobre un drogadicto que destruye su vida y se siente desconectado de todo. La canción es un lamento de un ser querido sobre alguien que se convierte en algo que no es.",
+        youtube: "https://www.youtube.com/watch?v=7qFfFVSerQo"
+      },
+      {
+        title: "Just",
+        album: "The Bends (1995)",
+        cover: "the_bends.jpg",
+        details: "A menudo se asocia con un pesimismo extremo y un escepticismo radical que condena la existencia. Un verdadero nihilista no creería en nada, no tendría lealtades ni ningún propósito más allá, quizás, del impulso de destruir.",
+        youtube: "https://www.youtube.com/watch?v=oIFLtNYI3Ls"
+      },
+      {
+        title: "Street Spirit (Fade Out)",
+        album: "The Bends (1995)",
+        cover: "the_bends.jpg",
+        details: "Una de las canciones más emotivas de Radiohead, con un arpegio hipnótico y atmósfera sombría. La letra aborda la desesperación y la lucha contra fuerzas opresivas, reflejando la fragilidad de la existencia humana. Thom Yorke ha mencionado que esta canción es una de las más oscuras de la banda, evocando una sensación de inevitable fatalidad.",
+        youtube: "https://www.youtube.com/watch?v=LCJblaUkkfc"
+      },
+      {
+        title: "Paranoid Android",
+        album: "OK Computer (1997)",
+        cover: "ok_computer.jpg",
+        details: "Un tema épico de seis minutos con secciones cambiantes y crítica a la sociedad contemporánea. La canción aborda la deshumanización en la era tecnológica y la alienación del individuo. Inspirada en una experiencia incómoda en un bar, refleja la paranoia y la ansiedad de la modernidad.",
+        youtube: "https://www.youtube.com/watch?v=fHiGbolFFGw"
+      },
+      {
+        title: "Karma Police",
+        album: "OK Computer (1997)",
+        cover: "ok_computer.jpg",
+        details: "Un himno surrealista contra la opresión, el conformismo y la alienación. La letra expresa el deseo de justicia poética contra aquellos que abusan de su poder, encapsulando la frustración hacia la autoridad y la falta de autenticidad en la sociedad.",
+        youtube: "https://www.youtube.com/watch?v=1uYWYWPc9HU"
+      },
+      {
+        title: "No Surprises",
+        album: "OK Computer (1997)",
+        cover: "ok_computer.jpg",
+        details: "Melodía dulce con una letra sombría sobre la apatía y la insatisfacción vital. La canción critica la monotonía de la vida moderna y el deseo de escapar de una existencia superficial y materialista.",
+        youtube: "https://www.youtube.com/watch?v=u5CVsCnxyXg"
+      },
+      {
+        title: "Let Down",
+        album: "OK Computer (1997)",
+        cover: "ok_computer.jpg",
+        details: "Una joya melancólica con múltiples capas de guitarras y una atmósfera etérea. La letra explora sentimientos de desilusión y la sensación de estar atrapado en una rutina sin sentido, buscando una conexión más profunda en un mundo impersonal.",
+        youtube: "https://www.youtube.com/watch?v=Z9Kic9mhrPw"
+      },
+      {
+        title: "Airbag",
+        album: "OK Computer (1997)",
+        cover: "ok_computer.jpg",
+        details: "Pista de apertura del álbum, inspirada en la idea de la reencarnación y la salvación moderna. La canción refleja sobre cómo una experiencia cercana a la muerte puede renovar la apreciación por la vida y resaltar su fragilidad.",
+        youtube: "https://www.youtube.com/watch?v=mk4svYUyx8c"
+      },
+      {
+        title: "Exit Music (for a Film)",
+        album: "OK Computer (1997)",
+        cover: "ok_computer.jpg",
+        details: "Compuesta para los créditos finales de 'Romeo + Juliet', con una atmósfera intensa y dramática. La canción narra una historia de escape y liberación de circunstancias opresivas, evocando emociones de desesperación y esperanza.",
+        youtube: "https://www.youtube.com/watch?v=kW2LieB3wl4"
+      },
+      {
+        title: "Everything in Its Right Place",
+        album: "Kid A (2000)",
+        cover: "kid_a.jpg",
+        details: "Tema inaugural de 'Kid A', caracterizado por su sonido electrónico y sus letras crípticas. La canción refleja la desconexión y la búsqueda de orden en un mundo caótico, marcando una transición en el estilo musical de la banda.",
+        youtube: "https://www.youtube.com/watch?v=J1X23YeBeEg"
+      },
+      {
+        title: "Idioteque",
+        album: "Kid A (2000)",
+        cover: "kid_a.jpg",
+        details: "Un acercamiento al IDM con samples experimentales y un ambiente de tensión constante. La letra aborda temas de crisis globales y ansiedad colectiva, reflejando el miedo a un futuro incierto.",
+        youtube: "https://www.youtube.com/watch?v=5y2m_dzr-t8"
+      },
+      {
+        title: "How to Disappear Completely",
+        album: "Kid A (2000)",
+        cover: "kid_a.jpg",
+        details: "Balada etérea con arreglos orquestales, que refleja el aislamiento y la introspección. La canción transmite la sensación de querer desvanecerse y escapar de la realidad, evocando una profunda melancolía.",
+        youtube: "https://www.youtube.com/watch?v=gZWk8VmJBEw"
+      },
+      {
+        title: "Pyramid Song",
+        album: "Amnesiac (2001)",
+        cover: "amnesiac.jpg",
+        details: "Un tema oscuro y onírico con un compás inusual y letras cargadas de misticismo. La canción explora temas de vida, muerte y trascendencia, inspirada en diversas tradiciones religiosas y filosóficas.",
+        youtube: "https://www.youtube.com/watch?v=3M_Gg1xAHE4"
+      },
+      {
+        title: "2+2=5",
+        album: "Hail to the Thief (2003)",
+        cover: "hail_to_the_thief.jpg",
+        details: "Crítica política y social, con un inicio tranquilo que desemboca en un estallido de guitarras. El título hace referencia a la novela '1984' de George Orwell, cuestionando la manipulación de la verdad y la conformidad.",
+        youtube: "https://www.youtube.com/watch?v=AS5_-VoVWS4"
+      },
+      {
+        title: "There There",
+        album: "Hail to the Thief (2003)",
+        cover: "hail_to_the_thief.jpg",
+        details: "Ritmos tribales y una atmósfera inquietante que recuerda al sonido más rock de la banda. La letra advierte sobre las tentaciones y las falsas promesas, sugiriendo que todo lo que brilla no es oro.",
+        youtube: "https://www.youtube.com/watch?v=7AQSLozK7aA"
+      },
+      {
+        title: "Reckoner",
+        album: "In Rainbows (2007)",
+        cover: "in_rainbows.jpg",
+        details: "Una pista etérea con percusión compleja y armonías vocales envolventes. La canción explora la interconexión humana y la transitoriedad de la vida, invitando a la reflexión sobre nuestra existencia y la inevitabilidad de la muerte. El título 'Reckoner' sugiere a alguien que toma cuentas o reflexiona profundamente sobre su vida y acciones.",
+        youtube: "https://www.youtube.com/watch?v=_uofQD-N6UI"
+      },
+      {
+        title: "Nude",
+        album: "In Rainbows (2007)",
+        cover: "in_rainbows.jpg",
+        details: "Una canción delicada y sensual que aborda temas de deseo y vulnerabilidad. La producción minimalista resalta la voz emotiva de Thom Yorke, creando una atmósfera íntima que invita a la introspección.",
+        youtube: "https://www.youtube.com/watch?v=BbWBRnDK_AE"
+      },
+      {
+        title: "Weird Fishes/Arpeggi",
+        album: "In Rainbows (2007)",
+        cover: "in_rainbows.jpg",
+        details: "Capas de guitarras arpegiadas que evocan la sensación de sumergirse en un mundo submarino. La letra sugiere una búsqueda de escape y trascendencia, reflejando la lucha interna entre la conformidad y el deseo de libertad.",
+        youtube: "https://www.youtube.com/watch?v=TNRCvG9YtYI"
+      },
+      {
+        title: "Lotus Flower",
+        album: "The King of Limbs (2011)",
+        cover: "the_king_of_limbs.jpg",
+        details: "Conocida por su videoclip minimalista y la danza de Thom Yorke, esta canción fusiona electrónica y rock. La letra enigmática y el ritmo hipnótico crean una atmósfera de misterio y seducción.",
+        youtube: "https://www.youtube.com/watch?v=cfOa1a8hYP8"
+      },
+      {
+        title: "Burn the Witch",
+        album: "A Moon Shaped Pool (2016)",
+        cover: "a_moon_shaped_pool.jpg",
+        details: "Con una orquestación tensa y un videoclip que alude a la histeria colectiva, esta canción critica la persecución y el conformismo social. La urgencia en la música refleja la presión de la sociedad por encontrar chivos expiatorios.",
+        youtube: "https://www.youtube.com/watch?v=yI2oS2hoL0k"
+      },
+      {
+        title: "Daydreaming",
+        album: "A Moon Shaped Pool (2016)",
+        cover: "a_moon_shaped_pool.jpg",
+        details: "Una composición lenta y onírica, con piano y efectos vocales procesados. La canción transmite una sensación de búsqueda y anhelo, posiblemente reflejando la vida personal de Thom Yorke en el momento de su creación.",
+        youtube: "https://www.youtube.com/watch?v=TTAU7lLDZYU"
+      },
+      {
+        title: "True Love Waits",
+        album: "A Moon Shaped Pool (2016)",
+        cover: "a_moon_shaped_pool.jpg",
+        details: "Después de más de dos décadas desde su primera interpretación en vivo, esta canción finalmente encuentra su lugar en un álbum de estudio. La letra aborda el amor, el envejecimiento y la soledad, y su inclusión en este disco añade una capa de melancolía y reflexión sobre el paso del tiempo. :(",
+        youtube: "https://www.youtube.com/watch?v=hg0WPpVFnEY"
+      }
+    ];
+
+    // Genera las tarjetas y asigna eventos
+    function displaySongs() {
+      const container = document.getElementById('songs-container');
+      container.innerHTML = '';
+
+      songs.forEach(song => {
+        const card = document.createElement('div');
+        card.className = 'card';
+
+        // Estructura de la tarjeta
+        const cardHTML = `
+          <img
+            src="imagenes/${song.cover}"
+            alt="${song.album}"
+            onerror="this.src='https://via.placeholder.com/220x220?text=No+Image'"
+          >
+          <h3>${song.title}</h3>
+          <p>${song.album}</p>
+          <button>Ver detalles</button>
+        `;
+        card.innerHTML = cardHTML;
+
+        // Asignar data-* con la info
+        const button = card.querySelector('button');
+        button.dataset.title = song.title;
+        button.dataset.details = song.details;
+        button.dataset.cover = song.cover;
+        button.dataset.youtube = song.youtube;
+
+        // Evento click en el botón
+        button.addEventListener('click', e => {
+          showDetails(
+            e.target.dataset.title,
+            e.target.dataset.details,
+            e.target.dataset.cover,
+            e.target.dataset.youtube
+          );
+        });
+
+        container.appendChild(card);
+      });
+    }
+
+    // Muestra detalles en el modal
+    function showDetails(title, details, cover, youtube) {
+      const modalText = document.getElementById('modal-text');
+      modalText.innerHTML = `
+        <img src="imagenes/${cover}" alt="${title}" style="max-width: 200px; display: block; margin: 0 auto;">
+        <br>
+        <strong>${title}</strong>
+        <br>
+        ${details}
+        <br><br>
+        <a href="${youtube}" target="_blank" style="color:blue; text-decoration:underline;">
+          Ver en YouTube
+        </a>
+      `;
+      document.getElementById('modal').style.display = 'flex';
+    }
+
+    // Cierra el modal
+    function closeModal(event) {
+      if (!event || event.target.id === 'modal' || event.target.textContent === 'Cerrar') {
+        document.getElementById('modal').style.display = 'none';
+      }
+    }
+
+    // Filtra las canciones segun el texto de busqueda
+    function filterSongs() {
+      const searchText = document.getElementById('search').value.toLowerCase();
+      document.querySelectorAll('.card').forEach(card => {
+        const name = card.querySelector('h3').textContent.toLowerCase();
+        card.style.display = name.includes(searchText) ? 'block' : 'none';
+      });
+    }
+
+    // Cierra el modal con la tecla Escape
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') closeModal();
+    });
+
+    // Inicializa la vista de canciones
+    displaySongs();
+  </script>
+</body>
+</html>
